@@ -34,17 +34,16 @@ class Graph:
  
 	# The function to do DFS traversal using recursive fn
 	def DFS(self,source):
-		V = len(self.graph)  #total nodes
 		global dfs_stk
  
 		# Mark all the vertices as not visited
-		visited =[False]*(V)
+		visited =[False]*(len(self.graph))
  
 		
 		sl=[]
 		dfs_stk.append(self.DFSUtil(source, visited,sl))
 
-		for i in range(V):
+		for i in range(len(self.graph)):
 			if visited[i] == False:
 				sl=[]
 				dfs_stk.append(self.DFSUtil(i, visited,sl))
@@ -108,7 +107,14 @@ nx.draw_networkx_edge_labels(G,pos,edge_labels=labels,edge_color='r',alpha=0.5 )
 #marks all edges traversed through DFS with red
 for i in dfs_stk:
 	if(len(i)>1):
-		for j in i[:(len(i))-1]:
-			nx.draw_networkx_edges(G,pos,edgelist=[(j,i.index(j)+1)],width=8,alpha=0.5,edge_color='r')
+		for j in i[:(len(i)-1)]:
+			if i[i.index(j)+1] in G[j]:
+				nx.draw_networkx_edges(G,pos,edgelist=[(j,i[i.index(j)+1])],width=8,alpha=0.5,edge_color='r')
+			else:
+				for k in i[1::-1]: #if in case the path was reversed coz all the possible neighbours were visited, we need to find the adj path now!
+					if k in G[j]:
+						nx.draw_networkx_edges(G,pos,edgelist=[(j,k)],width=8,alpha=0.5,edge_color='r')
+						break
+
 
 plt.show()
